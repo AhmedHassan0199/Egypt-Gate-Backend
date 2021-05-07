@@ -41,9 +41,6 @@ def RecogizeOld():
 def Recogize():
 
     x=request.files['ImageFile'].read()
-    x2=request.files['Encodings'].read()
-
-
     
     #decodedImage=cv2.imdecode(x, cv2.IMREAD_COLOR)
     #cv2.imshow("Image", decodedImage)
@@ -51,7 +48,7 @@ def Recogize():
     
     img = cv2.imdecode(nparr, cv2.IMREAD_COLOR)
     
-    DetectionMethod='hog'
+    DetectionMethod='cnn'
 
     EncodingsFilePath='DatasetEncodings.pickle'
     
@@ -59,7 +56,11 @@ def Recogize():
     
     # load the known faces and embeddings
     print("[INFO] loading encodings...")
-    data = pickle.loads(x2)
+    data = pickle.loads(open(EncodingsFilePath, "rb").read())
+    if data is not None:
+        print(data)
+    else:
+        print(("NONE"))
     # load the input image and convert it from BGR to RGB
     image = Image #Req Image!!!!!!!! 
     if image.shape[1] > 1500 or image.shape[2] > 1500 :
