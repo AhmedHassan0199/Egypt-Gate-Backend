@@ -64,7 +64,7 @@ def Recogize():
     # load the input image and convert it from BGR to RGB
     image = Image #Req Image!!!!!!!! 
     if image.shape[1] > 1500 or image.shape[2] > 1500 :
-        scale_percent=20
+        scale_percent=50
  
         width = int(image.shape[1] * scale_percent / 100)
         height = int(image.shape[0] * scale_percent / 100)
