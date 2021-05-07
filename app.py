@@ -122,5 +122,5 @@ def CheckForImg(Image,DetectionMethod,EncodingsFilePath):
 def ReturnEshta(eshta):
     return eshta
  
-app.run()
+app.run(threaded=True, port=5000)
 #CheckForImg('Nefertiti_Test.jpg','hog','encodings.pickle')
