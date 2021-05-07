@@ -58,7 +58,7 @@ def Recogize():
     print("[INFO] loading encodings...")
     data = pickle.loads(open(EncodingsFilePath, "rb").read())
     if data is not None:
-        print(data)
+        print("MALYAN")
     else:
         print(("NONE"))
     # load the input image and convert it from BGR to RGB
