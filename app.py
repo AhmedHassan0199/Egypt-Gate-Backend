@@ -64,7 +64,7 @@ def Recogize():
     # load the input image and convert it from BGR to RGB
     image = Image #Req Image!!!!!!!! 
     if image.shape[1] > 1500 or image.shape[2] > 1500 :
-        scale_percent=50
+        scale_percent=80
  
         width = int(image.shape[1] * scale_percent / 100)
         height = int(image.shape[0] * scale_percent / 100)
@@ -81,7 +81,7 @@ def Recogize():
     # for each face
     print("[INFO] recognizing faces...")
     boxes = face_recognition.face_locations(rgb,
-                                            model=DetectionMethod)
+                                            model=DetectionMethod, number_of_times_to_upsample=3)
     print("Gab el Boxes")
     encodings = face_recognition.face_encodings(rgb, boxes)
     # initialize the list of names for each face detected
