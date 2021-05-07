@@ -21,8 +21,8 @@ app = Flask(__name__)
 def index():
     return "<h1>Welcome to our server !!</h1>"
 
-@app.route('/Recognize' , methods=['GET', 'POST'])
-def Recogize():
+@app.route('/RecognizeOld' , methods=['GET', 'POST'])
+def RecogizeOld():
     x=request.files['ImageFile'].read()
     
     #decodedImage=cv2.imdecode(x, cv2.IMREAD_COLOR)
@@ -37,11 +37,23 @@ def Recogize():
     
     return Returned_Name
 
-@app.route('/<Image>/<DetectionMethod>/<EncodingsFilePath>')
-def CheckForImg(Image,DetectionMethod,EncodingsFilePath):
- 
+@app.route('/Recognize' , methods=['GET', 'POST'])
+def Recogize(Image,DetectionMethod,EncodingsFilePath):
+
+    x=request.files['ImageFile'].read()
     
- 
+    #decodedImage=cv2.imdecode(x, cv2.IMREAD_COLOR)
+    #cv2.imshow("Image", decodedImage)
+    nparr = np.frombuffer(x, np.uint8)
+    
+    img = cv2.imdecode(nparr, cv2.IMREAD_COLOR)
+    
+    DetectionMethod='cnn'
+
+    EncodingsFilePath='DatasetEncodings.pickle'
+    
+    Image=img
+    
     # load the known faces and embeddings
     print("[INFO] loading encodings...")
     data = pickle.loads(open(EncodingsFilePath, "rb").read())
@@ -113,8 +125,6 @@ def CheckForImg(Image,DetectionMethod,EncodingsFilePath):
     #response.headers['Content-Type'] = 'image/png'
     #print(response)
     return name
-    cv2.imshow("Image", image)
-    cv2.waitKey(0)
 
 if __name__ == '__main__':
     # Threaded option to enable multiple instances for multiple user access support
