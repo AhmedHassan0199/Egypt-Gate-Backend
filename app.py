@@ -80,7 +80,7 @@ def Recogize():
     # to each face in the input image, then compute the facial embeddings
     # for each face
     print("[INFO] recognizing faces...")
-    boxes = face_recognition.face_locations(rgb,
+    boxes = face_recognition.api.batch_face_locations(rgb,
                                             model=DetectionMethod, number_of_times_to_upsample=1)
     print("Gab el Boxes")
     encodings = face_recognition.face_encodings(rgb, boxes)
