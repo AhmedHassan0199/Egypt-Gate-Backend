@@ -33,24 +33,22 @@ def Recogize():
     
     img = cv2.imdecode(nparr, cv2.IMREAD_COLOR)
  
-    cv2.imwrite((driveLink+'Result.jpg'),img)
  
-    Returned_Image=CheckForImg((driveLink+'Result.jpg'),'cnn',(driveLink+'NewestEncodings.pickle'))
-    cv2.imwrite((driveLink+'Result.jpg'),Returned_Image)
+    Returned_Name=CheckForImg(img,'cnn','DatasetEncodings.pickle')
     
     
-    return send_file((driveLink+'Result.jpg'), mimetype='image/jpg')
+    return Returned_Name
  
 @app.route('/<Image>/<DetectionMethod>/<EncodingsFilePath>')
 def CheckForImg(Image,DetectionMethod,EncodingsFilePath):
  
-    filename = Image
+    
  
     # load the known faces and embeddings
     print("[INFO] loading encodings...")
     data = pickle.loads(open(EncodingsFilePath, "rb").read())
     # load the input image and convert it from BGR to RGB
-    image = cv2.imread(filename)  #Req Image!!!!!!!! 
+    image = Image #Req Image!!!!!!!! 
     if image.shape[1] > 1500 or image.shape[2] > 1500 :
         scale_percent=20
  
@@ -116,7 +114,6 @@ def CheckForImg(Image,DetectionMethod,EncodingsFilePath):
     #response = make_response(buffer.tobytes())
     #response.headers['Content-Type'] = 'image/png'
     #print(response)
-    cv2.imwrite('Result.jpg',image)
     return name
     cv2.imshow("Image", image)
     cv2.waitKey(0)
