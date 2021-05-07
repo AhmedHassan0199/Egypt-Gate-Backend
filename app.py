@@ -38,7 +38,7 @@ def RecogizeOld():
     return Returned_Name
 
 @app.route('/Recognize' , methods=['GET', 'POST'])
-def Recogize(Image,DetectionMethod,EncodingsFilePath):
+def Recogize():
 
     x=request.files['ImageFile'].read()
     
