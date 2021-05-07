@@ -81,7 +81,7 @@ def Recogize():
     # for each face
     print("[INFO] recognizing faces...")
     boxes = face_recognition.face_locations(rgb,
-                                            model=DetectionMethod, number_of_times_to_upsample=3)
+                                            model=DetectionMethod, number_of_times_to_upsample=1)
     print("Gab el Boxes")
     encodings = face_recognition.face_encodings(rgb, boxes)
     # initialize the list of names for each face detected
