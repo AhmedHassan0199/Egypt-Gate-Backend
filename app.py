@@ -82,11 +82,14 @@ def Recogize():
     print("[INFO] recognizing faces...")
     boxes = face_recognition.face_locations(rgb,
                                             model=DetectionMethod)
+    print("Gab el Boxes")
     encodings = face_recognition.face_encodings(rgb, boxes)
     # initialize the list of names for each face detected
     names = []
     # loop over the facial embeddings
+    print("Gab el encodings")
     for encoding in encodings:
+        print("Sha8al fel loop")
         # attempt to match each face in the input image to our known
         # encodings
         matches = face_recognition.compare_faces(data["encodings"],
