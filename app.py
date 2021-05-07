@@ -8,7 +8,6 @@ from flask import Flask, request, make_response , send_file
 from werkzeug.datastructures import FileStorage
 
 app = Flask(__name__)
-driveLink='gdrive/My Drive/Egypt XR Gate/Semi Final Dataset/Final Dataset'
 
 #ap = argparse.ArgumentParser()
 #ap.add_argument("-e", "--encodings", required=True,
@@ -20,9 +19,9 @@ driveLink='gdrive/My Drive/Egypt XR Gate/Semi Final Dataset/Final Dataset'
 #args = vars(ap.parse_args())
  
 @app.route('/')
-def Home():
-    return "SSSSS"
- 
+def index():
+    return "<h1>Welcome to our server !!</h1>"
+
 @app.route('/Recognize' , methods=['GET', 'POST'])
 def Recogize():
     x=request.files['ImageFile'].read()
@@ -38,7 +37,7 @@ def Recogize():
     
     
     return Returned_Name
- 
+
 @app.route('/<Image>/<DetectionMethod>/<EncodingsFilePath>')
 def CheckForImg(Image,DetectionMethod,EncodingsFilePath):
  
@@ -117,10 +116,8 @@ def CheckForImg(Image,DetectionMethod,EncodingsFilePath):
     return name
     cv2.imshow("Image", image)
     cv2.waitKey(0)
- 
-@app.route('/Second/<eshta>')
-def ReturnEshta(eshta):
-    return eshta
- 
-app.run(threaded=True, port=5000)
+
+if __name__ == '__main__':
+    # Threaded option to enable multiple instances for multiple user access support
+    app.run(threaded=True, port=5000)
 #CheckForImg('Nefertiti_Test.jpg','hog','encodings.pickle')
