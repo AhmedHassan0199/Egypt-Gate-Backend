@@ -1,4 +1,3 @@
-from tkinter import filedialog
 import face_recognition
 import argparse
 import pickle
