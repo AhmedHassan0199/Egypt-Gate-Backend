@@ -48,7 +48,7 @@ def Recogize():
     
     img = cv2.imdecode(nparr, cv2.IMREAD_COLOR)
     
-    DetectionMethod='cnn'
+    DetectionMethod='hog'
 
     EncodingsFilePath='DatasetEncodings.pickle'
     
