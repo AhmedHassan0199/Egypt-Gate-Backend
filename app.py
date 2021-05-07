@@ -6,7 +6,7 @@ import cv2
 import numpy as np
 from flask import Flask, request, make_response , send_file
 from werkzeug.datastructures import FileStorage
-from flask_ngrok import run_with_ngrok
+
 app = Flask(__name__)
 driveLink='gdrive/My Drive/Egypt XR Gate/Semi Final Dataset/Final Dataset'
 run_with_ngrok(app)
