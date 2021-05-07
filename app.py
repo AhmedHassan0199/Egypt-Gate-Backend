@@ -1,5 +1,3 @@
-
-print("XXX")
 import face_recognition
 import argparse
 import pickle
