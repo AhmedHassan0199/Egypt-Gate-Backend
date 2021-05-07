@@ -9,8 +9,7 @@ from werkzeug.datastructures import FileStorage
 
 app = Flask(__name__)
 driveLink='gdrive/My Drive/Egypt XR Gate/Semi Final Dataset/Final Dataset'
-run_with_ngrok(app)
- 
+
 #ap = argparse.ArgumentParser()
 #ap.add_argument("-e", "--encodings", required=True,
 #                help="path to serialized db of facial encodings")
