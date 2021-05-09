@@ -5,6 +5,7 @@ import cv2
 import numpy as np
 from flask import Flask, request, make_response , send_file
 from werkzeug.datastructures import FileStorage
+import cvlib as cv
 
 app = Flask(__name__)
 
@@ -17,25 +18,12 @@ app = Flask(__name__)
 #                help="face detection model to use: either `hog` or `cnn`")
 #args = vars(ap.parse_args())
  
+
+
 @app.route('/')
 def index():
     return "<h1>Welcome to our server !!</h1>"
 
-@app.route('/RecognizeOld' , methods=['GET', 'POST'])
-def RecogizeOld():
-    x=request.files['ImageFile'].read()
-    
-    #decodedImage=cv2.imdecode(x, cv2.IMREAD_COLOR)
-    #cv2.imshow("Image", decodedImage)
-    nparr = np.frombuffer(x, np.uint8)
-    
-    img = cv2.imdecode(nparr, cv2.IMREAD_COLOR)
- 
- 
-    Returned_Name=CheckForImg(img,'cnn','DatasetEncodings.pickle')
-    
-    
-    return Returned_Name
 
 @app.route('/Recognize' , methods=['GET', 'POST'])
 def Recogize():
@@ -79,11 +67,12 @@ def Recogize():
     # detect the (x, y)-coordinates of the bounding boxes corresponding
     # to each face in the input image, then compute the facial embeddings
     # for each face
+    faces, confidences = cv.detect_face(image) 
     print("[INFO] recognizing faces...")
-    boxes = face_recognition.face_locations(rgb,
-                                            model=DetectionMethod)
-    print("Gab el Boxes")
-    encodings = face_recognition.face_encodings(rgb, boxes)
+    #boxes = face_recognition.face_locations(rgb,
+    #                                        model=DetectionMethod)
+    print("Gab el faces")
+    encodings = face_recognition.face_encodings(rgb, faces)
     # initialize the list of names for each face detected
     names = []
     # loop over the facial embeddings
