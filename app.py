@@ -67,12 +67,11 @@ def Recogize():
     # detect the (x, y)-coordinates of the bounding boxes corresponding
     # to each face in the input image, then compute the facial embeddings
     # for each face
-    faces, confidences = cv.detect_face(image) 
     print("[INFO] recognizing faces...")
-    #boxes = face_recognition.face_locations(rgb,
-    #                                        model=DetectionMethod)
-    print("Gab el faces")
-    encodings = face_recognition.face_encodings(rgb, faces)
+    boxes = face_recognition.face_locations(rgb,
+                                            model=DetectionMethod)
+    print("Gab el Boxes")
+    encodings = face_recognition.face_encodings(rgb, boxes)
     # initialize the list of names for each face detected
     names = []
     # loop over the facial embeddings
