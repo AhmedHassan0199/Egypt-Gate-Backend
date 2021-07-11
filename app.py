@@ -20,6 +20,9 @@ import firebase_admin
 from firebase_admin import credentials
 from firebase_admin import firestore
 
+
+print("A7eeeeh")
+
 app = Flask(__name__)
 
 if not firebase_admin._apps:
