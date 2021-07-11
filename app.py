@@ -1,127 +1,168 @@
-import face_recognition
-import argparse
-import pickle
-import cv2
-import numpy as np
 from flask import Flask, request, make_response , send_file
-from werkzeug.datastructures import FileStorage
-import cvlib as cv
+from os import listdir
+from os.path import isdir
+from PIL import Image
+from matplotlib import pyplot
+from numpy import savez_compressed
+from numpy import asarray
+import cv2
+import face_recognition
+import silence_tensorflow.auto
+import tensorflow as tf
+import numpy as np
+from numpy import load
+from numpy import expand_dims
+from keras.models import load_model
+from sklearn.metrics import accuracy_score
+from sklearn.preprocessing import LabelEncoder
+from sklearn.preprocessing import Normalizer
+from sklearn.svm import SVC
+import math
+import firebase_admin
+from firebase_admin import credentials
+from firebase_admin import firestore
 
 app = Flask(__name__)
+driveLink='gdrive/My Drive/Egypt XR Gate/Semi Final Dataset'
 
-#ap = argparse.ArgumentParser()
-#ap.add_argument("-e", "--encodings", required=True,
-#                help="path to serialized db of facial encodings")
-#ap.add_argument("-i", "--image", required=True,
-#                help="path to input image")
-#ap.add_argument("-d", "--detection-method", type=str, default="cnn",
-#                help="face detection model to use: either `hog` or `cnn`")
-#args = vars(ap.parse_args())
- 
-
-
-@app.route('/')
-def index():
-    return "<h1>Welcome to our server !!</h1>"
-
+if not firebase_admin._apps:
+  cred = credentials.Certificate('/content/drive/MyDrive/Egypt XR Gate/Semi Final Dataset/egypt-gate-firestore.json') 
+  default_app = firebase_admin.initialize_app(cred)
+db = firestore.client()
 
 @app.route('/Recognize' , methods=['GET', 'POST'])
-def Recogize():
+def get_face(): 
+  x=request.files['ImageFile'].read()
+  Lang=request.headers['Lang']
+  print(Lang)
+  nparr = np.frombuffer(x, np.uint8)
+  img = cv2.imdecode(nparr, cv2.IMREAD_COLOR)
+  
+  cv2.imwrite((driveLink+'Result.jpg'),img)
 
-    x=request.files['ImageFile'].read()
+  #filename="/content/drive/MyDrive/Prom Pictures/_MG_2053 as Smart Object-1.jpg"
+  required_size=(160, 160)
+    # load image from file
     
-    #decodedImage=cv2.imdecode(x, cv2.IMREAD_COLOR)
-    #cv2.imshow("Image", decodedImage)
-    nparr = np.frombuffer(x, np.uint8)
-    
-    img = cv2.imdecode(nparr, cv2.IMREAD_COLOR)
-    
-    DetectionMethod='hog'
+  flag=1
+    #print(filename)
 
-    EncodingsFilePath='DatasetEncodings.pickle'
-    
-    Image=img
-    
-    # load the known faces and embeddings
-    print("[INFO] loading encodings...")
-    data = pickle.loads(open(EncodingsFilePath, "rb").read())
-    if data is not None:
-        print("MALYAN")
-    else:
-        print(("NONE"))
-    # load the input image and convert it from BGR to RGB
-    image = Image #Req Image!!!!!!!! 
-    if image.shape[1] > 1500 or image.shape[2] > 1500 :
-        scale_percent=20
- 
-        width = int(image.shape[1] * scale_percent / 100)
-        height = int(image.shape[0] * scale_percent / 100)
- 
-        # dsize
-        dsize = (width, height)
- 
-        # resize image
-        image = cv2.resize(image, dsize)
- 
-    rgb = cv2.cvtColor(image, cv2.COLOR_BGR2RGB)
-    # detect the (x, y)-coordinates of the bounding boxes corresponding
-    # to each face in the input image, then compute the facial embeddings
-    # for each face
-    print("[INFO] recognizing faces...")
-    boxes = face_recognition.face_locations(rgb,
-                                            model=DetectionMethod)
-    print("Gab el Boxes")
-    encodings = face_recognition.face_encodings(rgb, boxes)
-    # initialize the list of names for each face detected
-    names = []
-    # loop over the facial embeddings
-    print("Gab el encodings")
-    for encoding in encodings:
-        print("Sha8al fel loop")
-        # attempt to match each face in the input image to our known
-        # encodings
-        matches = face_recognition.compare_faces(data["encodings"],
-                                                encoding, tolerance=0.42)
-        name = "Unknown"
-    # check to see if we have found a match
-        if True in matches:
-            # find the indexes of all matched faces then initialize a
-            # dictionary to count the total number of times each face
-            # was matched
-            matchedIdxs = [i for (i, b) in enumerate(matches) if b]
-            counts = {}
-            # loop over the matched indexes and maintain a count for
-            # each recognized face face
-            for i in matchedIdxs:
-                name = data["names"][i]
-                counts[name] = counts.get(name, 0) + 1
-            # determine the recognized face with the largest number of
-            # votes (note: in the event of an unlikely tie Python will
-            # select first entry in the dictionary)
-            print(counts)
-            name = max(counts, key=counts.get)
- 
-        # update the list of names
-        names.append(name)
-    # loop over the recognized faces
-    for ((top, right, bottom, left), name) in zip(boxes, names):
-        # draw the predicted face name on the image
-        print(name)
-        cv2.rectangle(image, (left, top), (right, bottom), (0, 255, 0), 2)
-        y = top - 15 if top - 15 > 15 else top + 15
-        cv2.putText(image, name, (left, y), cv2.FONT_HERSHEY_SIMPLEX,
-                    0.75, (0, 255, 0), 2)
-    # show the output image
- 
- 
- 
-    #retval, buffer = cv2.imencode('.jpg', image)
-    #response = make_response(buffer.tobytes())
-    #response.headers['Content-Type'] = 'image/png'
-    #print(response)
-    return name
+  image1 =img #cv2.imread(filename)#
+  if image1.shape[1] > 1500 or image1.shape[0] > 1500:
+    scale_percent = 30
 
-if __name__ == '__main__':
-    # Threaded option to enable multiple instances for multiple user access support
-    app.run()
-#CheckForImg('Nefertiti_Test.jpg','hog','encodings.pickle')
+    width = int(image1.shape[1] * scale_percent / 100)
+    height = int(image1.shape[0] * scale_percent / 100)
+    dsize = (width, height)
+    image1 = cv2.resize(image1, dsize)
+
+
+  rgb = cv2.cvtColor(image1, cv2.COLOR_BGR2RGB)
+
+  boxes = face_recognition.face_locations(rgb, model='cnn',number_of_times_to_upsample=1)
+  #image = image.convert('RGB')
+
+    # convert to array
+  pixels = asarray(rgb)
+
+
+
+  if len(boxes)<1:
+    flag=0
+    face_array = asarray(rgb)
+    print("no face found")
+    return "No face found"
+
+      
+  y1=boxes[0][0]
+  y2=boxes[0][2]
+  x1=boxes[0][3]
+  x2=boxes[0][1]
+  face = pixels[y1 :y2, x1:x2]  
+    # extract the face
+    #cv2_imshow(face)
+    # resize pixels to the model size
+  image = Image.fromarray(face)
+  image = image.resize(required_size)
+  face_array = asarray(image)
+  print("face found")
+    #print(len(face_array))
+
+  #savez_compressed('face3.npz', face_array)
+  model = load_model('/content/drive/MyDrive/Egypt XR Gate/Semi Final Dataset/facenet_keras.h5')
+  print('Loaded Model')
+  face_emb,flag=get_face_embeding(model,face_array)
+  if flag==0:
+    return "Face embeding can not be found"
+
+  king_name=get_face_name(face_emb)
+ 
+  if Lang=='English':
+    docToAccess='Pharaohs'
+  else:
+    docToAccess='Pharaohs_'+Lang
+      
+  doc_ref = db.collection(docToAccess).document(king_name.split('#')[0])
+  doc = doc_ref.get()
+  print(king_name)
+  stringToReturn=""
+  if doc.exists:
+    x=doc.to_dict();
+    for key in x:
+      if not(key=="long-description"):
+        stringToReturn=stringToReturn+(key)+'^'+str(x[key])
+        stringToReturn=stringToReturn+"!"
+    print(stringToReturn)
+  else:
+    stringToReturn='No Such Doc'
+    print(stringToReturn)
+  return stringToReturn
+  
+
+  #call
+  #Returned_Image.split('#')[0]
+def get_face_embeding (model, face_pixels):
+  # scale pixel values
+  face_pixels = face_pixels.astype('float64')
+  flag=1
+    # standardize pixel values across channels (global)
+  mean, std = face_pixels.mean(), face_pixels.std()
+  face_pixels = (face_pixels - mean) / std
+    # transform face into one sample
+  samples = expand_dims(face_pixels, axis=0)
+    # make prediction to get embedding
+  face_embedding = model.predict(samples)
+  isNan=math.isnan(face_embedding[0][0])
+  if isNan==True:
+    flag=0
+    print(face_embedding[0][0])
+  return face_embedding[0],flag
+
+
+def get_face_name (face_emb):
+  data = load('/content/drive/MyDrive/Egypt XR Gate/Semi Final Dataset/kings-faces-embeddings_train&test.npz')
+  trainX, trainy = data['arr_0'], data['arr_1']
+  #print('Dataset: train=%d' % (trainX.shape[0]))
+  # normalize input vectors
+  normalized_vector = Normalizer(norm='l2')
+
+  trainX = normalized_vector.transform(trainX)
+
+  # label encode targets
+  out_encoder = LabelEncoder()
+  out_encoder.fit(trainy)
+  trainy = out_encoder.transform(trainy)
+  # fit model
+  model = SVC(kernel='poly', probability=True)
+  model.fit(trainX, trainy)
+
+  samples = expand_dims(face_emb, axis=0)
+  yhat_class = model.predict(samples)
+  
+  predict_names = out_encoder.inverse_transform(yhat_class)
+  print('Predicted: ' ,(predict_names[0]))
+  return predict_names[0]
+
+
+#get_face()
+app.run()
