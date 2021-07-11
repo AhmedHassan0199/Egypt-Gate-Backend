@@ -7,8 +7,6 @@ from numpy import savez_compressed
 from numpy import asarray
 import cv2
 import face_recognition
-import silence_tensorflow.auto
-import tensorflow as tf
 import numpy as np
 from numpy import load
 from numpy import expand_dims
@@ -23,10 +21,9 @@ from firebase_admin import credentials
 from firebase_admin import firestore
 
 app = Flask(__name__)
-driveLink='gdrive/My Drive/Egypt XR Gate/Semi Final Dataset'
 
 if not firebase_admin._apps:
-  cred = credentials.Certificate('/content/drive/MyDrive/Egypt XR Gate/Semi Final Dataset/egypt-gate-firestore.json') 
+  cred = credentials.Certificate('egypt-gate-firestore.json') 
   default_app = firebase_admin.initialize_app(cred)
 db = firestore.client()
 
@@ -38,7 +35,7 @@ def get_face():
   nparr = np.frombuffer(x, np.uint8)
   img = cv2.imdecode(nparr, cv2.IMREAD_COLOR)
   
-  cv2.imwrite((driveLink+'Result.jpg'),img)
+  cv2.imwrite(('Result.jpg'),img)
 
   #filename="/content/drive/MyDrive/Prom Pictures/_MG_2053 as Smart Object-1.jpg"
   required_size=(160, 160)
@@ -89,7 +86,7 @@ def get_face():
     #print(len(face_array))
 
   #savez_compressed('face3.npz', face_array)
-  model = load_model('/content/drive/MyDrive/Egypt XR Gate/Semi Final Dataset/facenet_keras.h5')
+  model = load_model('facenet_keras.h5')
   print('Loaded Model')
   face_emb,flag=get_face_embeding(model,face_array)
   if flag==0:
@@ -107,7 +104,7 @@ def get_face():
   print(king_name)
   stringToReturn=""
   if doc.exists:
-    x=doc.to_dict();
+    x=doc.to_dict()
     for key in x:
       if not(key=="long-description"):
         stringToReturn=stringToReturn+(key)+'^'+str(x[key])
@@ -140,7 +137,7 @@ def get_face_embeding (model, face_pixels):
 
 
 def get_face_name (face_emb):
-  data = load('/content/drive/MyDrive/Egypt XR Gate/Semi Final Dataset/kings-faces-embeddings_train&test.npz')
+  data = load('kings-faces-embeddings_train&test.npz')
   trainX, trainy = data['arr_0'], data['arr_1']
   #print('Dataset: train=%d' % (trainX.shape[0]))
   # normalize input vectors
