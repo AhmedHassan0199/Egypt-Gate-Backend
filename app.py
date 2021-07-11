@@ -27,6 +27,10 @@ if not firebase_admin._apps:
   default_app = firebase_admin.initialize_app(cred)
 db = firestore.client()
 
+@app.route('/')
+def get_face(): 
+  return "Hello"
+
 @app.route('/Recognize' , methods=['GET', 'POST'])
 def get_face(): 
   x=request.files['ImageFile'].read()
